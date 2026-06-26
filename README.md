@@ -44,14 +44,20 @@ pip install -r requirements.txt
 
 ## 🖥️ Sample Output
 
-Paste a sample of your app's CLI or Streamlit output here so a reader can see what a generated plan looks like:
+Here is the terminal output from running the backend CLI demonstration script (`main.py`), validating that the scheduling algorithm runs successfully:
 
-```
-# e.g.:
-# Daily plan for Biscuit (Golden Retriever):
-#   08:00 — Morning walk (30 min) [priority: high]
-#   09:00 — Feeding (10 min) [priority: high]
-#   ...
+```text
+🐾 PawPal+ Backend CLI Demo 🐾
+
+Details for pets owned by Jordan:
+  * Mochi (3yo Golden Retriever, Energy: High) - Diet: No grains. Notes: Loves tennis balls
+  * Luna (2yo Siamese Cat, Energy: Low) - Diet: Salmon allergy. Notes: Likes quiet spots
+
+--- TODAY'S SCHEDULE ---
+  [08:00] Mochi: Breakfast Feeding (10 min, Priority: HIGH)
+  [08:10] Luna: Morning Feeding (15 min, Priority: HIGH)
+  [08:25] Mochi: Morning Walk (30 min, Priority: HIGH)
+  [08:55] Luna: Play with Laser Pointer (20 min, Priority: MEDIUM)
 ```
 
 ## 🧪 Testing PawPal+
@@ -66,8 +72,16 @@ pytest --cov
 
 Sample test output:
 
-```
-# Paste your pytest output here
+```text
+============================= test session starts ==============================
+platform darwin -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/rikaraxkz/Desktop/CodePath/AI110/AI110 - PawPal+
+plugins: anyio-4.14.1
+collected 11 items
+
+tests/test_pawpal.py ...........                                         [100%]
+
+============================== 11 passed in 0.03s ==============================
 ```
 
 ## 📐 Smarter Scheduling

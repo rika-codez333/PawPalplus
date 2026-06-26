@@ -25,6 +25,10 @@ class Task:
         """Mark the task as completed."""
         self.isCompleted = True
 
+    def mark_complete(self) -> None:
+        """Mark the task as completed."""
+        self.markAsCompleted()
+
 
 @dataclass
 class Pet:
@@ -42,6 +46,12 @@ class Pet:
             f"{self.name} ({self.age}yo {self.breed}, Energy: {self.energyLevel}) "
             f"- Diet: {self.dietRestrictions}. Notes: {self.otherInfo}"
         )
+
+    def addTask(self, task: Task) -> None:
+        """Add a task to the pet's list of tasks."""
+        if not task.petName:
+            task.petName = self.name
+        self.tasks.append(task)
 
 
 @dataclass
@@ -62,10 +72,7 @@ class Owner:
             self.pets.remove(pet)
 
     def getAllTasks(self) -> list[Task]:
-        """
-        Retrieve all tasks for all pets owned by this owner.
-        This provides the link between Owner/Pets data and the Scheduler.
-        """
+        """Retrieve all tasks for all pets owned by this owner."""
         all_tasks = []
         for pet in self.pets:
             for task in pet.tasks:
@@ -83,15 +90,7 @@ class Scheduler:
     planExplanation: str = ""
 
     def _parseAvailability(self, availability_str: str) -> tuple[int, str]:
-        """
-        Helper to parse the availability string.
-        Supports:
-          - A simple number of minutes: "180" -> (180, "08:00")
-          - Time ranges: "08:00-12:00, 14:00-16:00" -> (360, "08:00")
-        Returns:
-          total_minutes: int
-          start_time: str
-        """
+        """Parse owner availability into a total minutes budget and start time."""
         if not availability_str:
             return 240, "08:00"
         
@@ -133,14 +132,9 @@ class Scheduler:
             return time_str
 
     def _sortTasks(self, tasks: list[Task], owner: Owner) -> list[Task]:
-        """
-        Sort tasks based on constraints and preferences:
-          1. Priority (HIGH -> MEDIUM -> LOW)
-          2. Owner preferred task types (from owner.preferences['preferredTypes'])
-          3. Shortest duration first (Shortest Job First heuristic)
-        """
+        """Sort tasks by priority level, owner preferred task types, and shortest duration."""
         priority_map = {Priority.HIGH: 3, Priority.MEDIUM: 2, Priority.LOW: 1}
-        preferred_types = owner.preferences.get("preferredTypes", [])
+        preferred_types = owner.preferences.get("preferredTypes", []) if owner.preferences else []
 
         def sort_key(t: Task) -> tuple[int, int, int]:
             p_val = priority_map.get(t.priority, 0)
@@ -151,10 +145,7 @@ class Scheduler:
         return sorted(tasks, key=sort_key)
 
     def generateSchedule(self, owner: Owner, tasks: list[Task] = None) -> None:
-        """
-        Generate daily and weekly schedules based on owner constraints,
-        prioritizing and ordering tasks.
-        """
+        """Generate daily and weekly schedules based on owner constraints and preferences."""
         # Retrieve tasks from the owner if not explicitly passed
         if tasks is None:
             tasks = owner.getAllTasks()
@@ -186,16 +177,18 @@ class Scheduler:
 
         for task in daily_candidates:
             if task.duration <= remaining_minutes:
-                # Schedule task
-                task.startTime = current_time
-                self.dailySchedule.append(task)
+                # Schedule task on a shallow copy to prevent side-effects
+                import copy
+                task_copy = copy.copy(task)
+                task_copy.startTime = current_time
+                self.dailySchedule.append(task_copy)
                 
                 # Advance time and decrement budget
                 explanation_lines.append(
-                    f" - [{current_time}] {task.petName}: {task.name} ({task.duration} mins, Priority: {task.priority.value})"
+                    f" - [{current_time}] {task_copy.petName}: {task_copy.name} ({task_copy.duration} mins, Priority: {task_copy.priority.value})"
                 )
-                current_time = self._addMinutesToTime(current_time, task.duration)
-                remaining_minutes -= task.duration
+                current_time = self._addMinutesToTime(current_time, task_copy.duration)
+                remaining_minutes -= task_copy.duration
             else:
                 skipped_tasks.append(task)
 
