@@ -1,0 +1,50 @@
+classDiagram
+    direction TB
+
+    class Owner {
+        +String name
+        +String availability
+        +Map preferences
+        +addPet(pet: Pet) void
+        +removePet(pet: Pet) void
+    }
+
+    class Pet {
+        +String name
+        +String breed
+        +int age
+        +String dietRestrictions
+        +String energyLevel
+        +String otherInfo
+        +getDetails() String
+    }
+
+    class Priority {
+        <<enumeration>>
+        LOW
+        MEDIUM
+        HIGH
+    }
+
+    class Task {
+        +String name
+        +String type
+        +Priority priority
+        +int duration
+        +boolean isCompleted
+        +markAsCompleted() void
+    }
+
+    class Scheduler {
+        +List~Task~ dailySchedule
+        +List~Task~ weeklySchedule
+        +String planExplanation
+        +generateSchedule(owner: Owner, tasks: List~Task~) void
+        +filterTasksByPet(petName: String) List~Task~
+    }
+
+    Owner "1" o--> "*" Pet : owns
+    Pet "1" o--> "*" Task : has
+    Scheduler ..> Owner : reads preferences
+    Scheduler "1" --> "*" Task : schedules
+    Task ..> Priority : uses

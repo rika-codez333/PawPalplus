@@ -5,7 +5,33 @@
 **a. Initial design**
 
 - Briefly describe your initial UML design.
+    - owner will be able to enter their info as well as pet(s)
+    - pet(s) will each have individual profile that holds all relevant info
+    - each task is created for pet(s) by owner and tagged with a priority level 
+    - user can specify time constraints or preferences
+    - daily schedules are generated and sorted/filtered
+
 - What classes did you include, and what responsibilities did you assign to each?
+    1. Owner
+        - user name
+        - number of pets
+        - availability / preferences
+    2. Pet
+        - pet name 
+        - breed
+        - age
+        - diet / food restrictions
+        - general energy level
+        - other relevant info
+    3. Task
+        - task name / type
+        - priority tag (low to high)
+        - time (duration)
+    4. Scheduler
+        - task name/type
+        - time (duration)
+        - daily/weekly scheduler
+        - daily execution plan explanation -- considering constraints (time available, priority, owner preferences)
 
 **b. Design changes**
 
